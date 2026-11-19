@@ -100,50 +100,65 @@ void adiciona_item_lista_ordenada(Lista *l, TAREFA t)
     q->chave.id = l->qtd;
 }
 
-// void removerItemLista(Lista *l, int id) {
+void removerItemLista(Lista *l, int id)
+{
+    ponteiro p, aux;
+    p = l->prim;
 
-//     ponteiro p, q;
-//     p = l->prim;
-//     if (p =) {
+    while (p->prox != NULL && p->prox->chave.id != id)
+    {
+        p = p->prox; 
+    }
 
-//     }
-//     while (p->chave.id != id)
-//     {
-//         q = p;
-//         p = p->prox;
-//     }
-
-// }
+    aux = p->prox;
+    p->prox = aux->prox;
+    if (aux == l->ult) {
+        l->ult = p;
+    }
+    l->qtd--;
+    free(aux);
+    while (p->prox != NULL)
+    {
+        p->prox->chave.id = id;
+        id++;
+    }
+}
 
 void exibe_lista(Lista l)
 {
     ponteiro p;
     char prioridade[30];
-    p = l.prim->prox;
-    printf("\n******************************************\n");
-    while (p != NULL)
-    {
-
-        switch (p->chave.prioridade)
-        {
-        case 1:
-            strcpy(prioridade, "(Prioridade Baixa)");
-            break;
-        case 2:
-            strcpy(prioridade, "(Prioridade Media)");
-            break;
-        case 3:
-            strcpy(prioridade, "(Prioridade Alta)");
-            break;
-        default:
-            break;
-        }
-
-        printf("\n%d - %s %s", p->chave.id, p->chave.tarefa, prioridade);
-
-        p = p->prox;
-    }
+    if (l.prim == l.ult) {
     printf("\n\n******************************************\n");
+    printf("\n(lista vazia)");
+    printf("\n\n******************************************\n");
+    } else {
+        p = l.prim->prox;
+        printf("\n******************************************\n");
+        while (p != NULL)
+        {
+    
+            switch (p->chave.prioridade)
+            {
+            case 1:
+                strcpy(prioridade, "(Prioridade Baixa)");
+                break;
+            case 2:
+                strcpy(prioridade, "(Prioridade Media)");
+                break;
+            case 3:
+                strcpy(prioridade, "(Prioridade Alta)");
+                break;
+            default:
+                break;
+            }
+    
+            printf("\n%d - %s %s", p->chave.id, p->chave.tarefa, prioridade);
+    
+            p = p->prox;
+        }
+        printf("\n\n******************************************\n");
+    }
 }
 
 void ler_tarefa(TAREFA *t)
@@ -160,7 +175,8 @@ void MENU()
     printf("1 - Inserir tarefa na lista\n");
     printf("2 - Ver lista\n");
     printf("3 - Ver lista ordenada por prioridade\n");
-    printf("4 - Encerrar Programa\n");
+    printf("4 - Remover tarefa da lista\n");
+    printf("5 - Encerrar Programa\n");
     printf("Entre com a opcao desejada: \n");
 }
 
@@ -170,7 +186,7 @@ int main()
     Lista L, ListaOrdenada;
     inicializa_lista(&L);
     inicializa_lista(&ListaOrdenada);
-    int op;
+    int op, id;
     do
     {
         MENU();
@@ -189,10 +205,16 @@ int main()
         case 3:
             exibe_lista(ListaOrdenada);
             break;
+        case 4:
+            printf("Digite o numero da tarefa que deseja remover: \n");
+            scanf("%d", &id);
+            removerItemLista(&L, id);
+            removerItemLista(&ListaOrdenada, id);
+            break;
         default:
             break;
         }
-    } while (op != 4);
+    } while (op != 5);
 
     return 0;
 }
