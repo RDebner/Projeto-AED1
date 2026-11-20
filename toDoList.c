@@ -107,12 +107,13 @@ void removerItemLista(Lista *l, int id)
 
     while (p->prox != NULL && p->prox->chave.id != id)
     {
-        p = p->prox; 
+        p = p->prox;
     }
 
     aux = p->prox;
     p->prox = aux->prox;
-    if (aux == l->ult) {
+    if (aux == l->ult)
+    {
         l->ult = p;
     }
     l->qtd--;
@@ -124,20 +125,50 @@ void removerItemLista(Lista *l, int id)
     }
 }
 
-void exibe_lista(Lista l)
+void marcarTarefaConcluida(Lista *l, Lista *lo, Lista *lc, int id)
+{
+    ponteiro p;
+    p = l->prim;
+
+    while (p->prox != NULL && p->prox->chave.id != id)
+    {
+        p = p->prox;
+    }
+
+    adiciona_item_lista(lc, p->prox->chave);
+    removerItemLista(l, id);
+    removerItemLista(lo, id);
+}
+
+void exibe_lista(Lista l, int op)
 {
     ponteiro p;
     char prioridade[30];
-    if (l.prim == l.ult) {
-    printf("\n\n******************************************\n");
-    printf("\n(lista vazia)");
-    printf("\n\n******************************************\n");
-    } else {
+    switch (op)
+    {
+    case 2:
+        printf("\n************ TAREFAS PENDENTES ************\n");
+        break;
+    case 3:
+        printf("\n************ TAREFAS PENDENTES ************\n");
+        break;
+    case 4:
+        printf("\n*********** TAREFAS CONCLUIDAS ************\n");
+        break;
+    default:
+        break;
+    }
+    if (l.prim == l.ult)
+    {
+        printf("\n(lista vazia)");
+        printf("\n\n******************************************\n");
+    }
+    else
+    {
         p = l.prim->prox;
-        printf("\n******************************************\n");
         while (p != NULL)
         {
-    
+
             switch (p->chave.prioridade)
             {
             case 1:
@@ -152,9 +183,8 @@ void exibe_lista(Lista l)
             default:
                 break;
             }
-    
+
             printf("\n%d - %s %s", p->chave.id, p->chave.tarefa, prioridade);
-    
             p = p->prox;
         }
         printf("\n\n******************************************\n");
@@ -173,24 +203,40 @@ void MENU()
 {
     printf("****************  M E N U ****************\n");
     printf("1 - Inserir tarefa na lista\n");
-    printf("2 - Ver lista\n");
+    printf("2 - Ver lista de tarefas pendentes\n");
     printf("3 - Ver lista ordenada por prioridade\n");
-    printf("4 - Remover tarefa da lista\n");
-    printf("5 - Encerrar Programa\n");
+    printf("4 - Ver lista de tarefas concluidas\n");
+    printf("5 - Marcar tarefa como concluida\n");
+    printf("6 - Remover tarefa da lista\n");
+    printf("7 - Encerrar Programa\n");
     printf("Entre com a opcao desejada: \n");
+}
+
+int verificarListaVazia(Lista *l) {
+    if (l->prim == l->ult) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 int main()
 {
     TAREFA T;
-    Lista L, ListaOrdenada;
+    Lista L, ListaOrdenada, ListaConcluidas;
     inicializa_lista(&L);
     inicializa_lista(&ListaOrdenada);
+    inicializa_lista(&ListaConcluidas);
     int op, id;
     do
     {
         MENU();
         scanf("%d", &op);
+        while (op < 1 || op > 7)
+        {
+            printf("Opcao invalida, digite uma opcao valida: \n");
+            scanf("%d", &op);
+        }
         getchar();
         switch (op)
         {
@@ -200,21 +246,35 @@ int main()
             adiciona_item_lista_ordenada(&ListaOrdenada, T);
             break;
         case 2:
-            exibe_lista(L);
+            exibe_lista(L, op);
             break;
         case 3:
-            exibe_lista(ListaOrdenada);
+            exibe_lista(ListaOrdenada, op);
             break;
         case 4:
-            printf("Digite o numero da tarefa que deseja remover: \n");
+            exibe_lista(ListaConcluidas, op);
+            break;
+        case 5:
+            printf("Digite o numero da tarefa concluida: \n");
             scanf("%d", &id);
-            removerItemLista(&L, id);
-            removerItemLista(&ListaOrdenada, id);
+            marcarTarefaConcluida(&L, &ListaOrdenada, &ListaConcluidas, id);
+            break;
+        case 6:
+            if(verificarListaVazia(&L) == 0) {
+                printf("\n******************************************\n");
+                printf("\n(Nao ha tarefas na lista para remover)\n");
+                printf("\n\n******************************************\n");
+            } else {
+                printf("Digite o numero da tarefa que deseja remover: \n");
+                scanf("%d", &id);
+                removerItemLista(&L, id);
+                removerItemLista(&ListaOrdenada, id);
+            }
             break;
         default:
             break;
         }
-    } while (op != 5);
+    } while (op != 7);
 
     return 0;
 }
