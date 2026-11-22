@@ -247,6 +247,20 @@ int verificarIdValido(Lista *l, int id)
     return idValido;
 }
 
+void libera_lista(Lista *l)
+{
+    ponteiro p = l->prim;
+    while (p != NULL)
+    {
+        ponteiro aux = p;
+        p = p->prox;
+        free(aux);
+    }
+    l->prim = NULL;
+    l->ult = NULL;
+    l->qtd = 0;
+}
+
 int main()
 {
     TAREFA T;
@@ -335,6 +349,10 @@ int main()
             break;
         }
     } while (op != 7);
+
+    libera_lista(&L);
+    libera_lista(&ListaOrdenada);
+    libera_lista(&ListaConcluidas);
 
     return 0;
 }
