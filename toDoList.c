@@ -261,13 +261,128 @@ void libera_lista(Lista *l)
     l->qtd = 0;
 }
 
+void criarArq(Lista l) {   // sem a struct...
+   FILE *fp;  
+   ponteiro p;
+
+    fp = fopen ("Lista.dat", "wb"); //arquivo para escrita binária
+   if (fp == NULL) {  
+      printf ("Erro ao abrir o arquivo.\n");  
+      return;  
+   }  
+   else {  p = l.prim->prox;
+	       while(p!=NULL) {
+             fwrite(&(p->chave), sizeof(TAREFA), 1, fp); 
+             p = p->prox;
+	      }
+          }         
+     fclose (fp);  
+       
+}/*Função reponsavel por exibir o conteudo do arquivo Binario.dat*/   
+
+void criarArqOrdenado(Lista l) {   // sem a struct...
+   FILE *fp;  
+   ponteiro p;
+
+    fp = fopen ("ListaOrdenada.dat", "wb"); //arquivo para escrita binária
+   if (fp == NULL) {  
+      printf ("Erro ao abrir o arquivo.\n");  
+      return;  
+   }  
+   else {  p = l.prim->prox;
+	       while(p!=NULL) {
+             fwrite(&(p->chave), sizeof(TAREFA), 1, fp); 
+             p = p->prox;
+	      }
+          }         
+     fclose (fp);  
+       
+}/*Função reponsavel por exibir o conteudo do arquivo Binario.dat*/    
+
+void criarArqConcluido(Lista l) {   // sem a struct...
+   FILE *fp;  
+   ponteiro p;
+
+    fp = fopen ("ListaConcluidas.dat", "wb"); //arquivo para escrita binária
+   if (fp == NULL) {  
+      printf ("Erro ao abrir o arquivo.\n");  
+      return;  
+   }  
+   else {  p = l.prim->prox;
+	       while(p!=NULL) {
+             fwrite(&(p->chave), sizeof(TAREFA), 1, fp); 
+             p = p->prox;
+	      }
+          }         
+     fclose (fp);  
+       
+}/*Função reponsavel por exibir o conteudo do arquivo Binario.dat*/     
+
+void carregarLista(Lista *l) {
+    
+    FILE *fp;
+    TAREFA t;
+
+    fp = fopen("Lista.dat", "rb");
+    if (fp == NULL) {
+        inicializa_lista(&(*l));
+        return;
+    } else {
+        inicializa_lista(&(*l));
+        while (fread(&t, sizeof(TAREFA), 1, fp))
+        {
+            adiciona_item_lista(&(*l), t, t.id);
+        }
+        fclose(fp);
+    }
+}
+
+void carregarListaOrdenada(Lista *l) {
+    
+    FILE *fp;
+    TAREFA t;
+
+    fp = fopen("Lista.dat", "rb");
+    if (fp == NULL) {
+        inicializa_lista(&(*l));
+        return;
+    } else {
+        inicializa_lista(&(*l));
+        while (fread(&t, sizeof(TAREFA), 1, fp))
+        {
+            adiciona_item_lista(&(*l), t, t.id);
+        }
+        fclose(fp);
+    }
+}
+
+void carregarListaConcluidas(Lista *l) {
+    
+    FILE *fp;
+    TAREFA t;
+
+    fp = fopen("Lista.dat", "rb");
+    if (fp == NULL) {
+        inicializa_lista(&(*l));
+        return;
+    } else {
+        inicializa_lista(&(*l));
+        while (fread(&t, sizeof(TAREFA), 1, fp))
+        {
+            adiciona_item_lista(&(*l), t, t.id);
+        }
+        fclose(fp);
+    }
+}
+
 int main()
 {
     TAREFA T;
     Lista L, ListaOrdenada, ListaConcluidas;
-    inicializa_lista(&L);
-    inicializa_lista(&ListaOrdenada);
-    inicializa_lista(&ListaConcluidas);
+    carregarLista(&L);
+    carregarListaOrdenada(&ListaOrdenada);
+    carregarListaConcluidas(&ListaConcluidas);
+
     int op, id, ID = 1;
     do
     {
@@ -349,6 +464,10 @@ int main()
             break;
         }
     } while (op != 7);
+
+    criarArq(L);
+    criarArqOrdenado(ListaOrdenada);
+    criarArqConcluido(ListaConcluidas);
 
     libera_lista(&L);
     libera_lista(&ListaOrdenada);
